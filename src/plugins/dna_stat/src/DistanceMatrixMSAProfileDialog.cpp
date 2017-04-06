@@ -156,7 +156,6 @@ void DistanceMatrixMSAProfileTask::prepare() {
 
 QList<Task*> DistanceMatrixMSAProfileTask::onSubTaskFinished(Task* subTask) {
     MSADistanceAlgorithm* algo = qobject_cast<MSADistanceAlgorithm*>(subTask);
-    
     QList<Task*> res;
     if (algo != NULL) {
         if (algo->hasError() || algo->isCanceled()) {
@@ -270,7 +269,6 @@ QList<Task*> DistanceMatrixMSAProfileTask::onSubTaskFinished(Task* subTask) {
             }
             resultText += "\n";
 
-            int minLen = s.ma.getLength();
             for (int i = 0; i < s.ma.getNumRows(); i++) {
                 QString name = s.ma.getRow(i).getName();
                 TextUtils::wrapForCSV(name);
