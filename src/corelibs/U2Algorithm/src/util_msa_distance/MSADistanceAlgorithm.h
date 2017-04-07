@@ -75,16 +75,13 @@ protected:
 
 typedef QVarLengthArray<QVarLengthArray<int> > varLengthMatrix;
 
-class U2ALGORITHM_EXPORT MSADistanceMatrix : public QObject{
-    Q_OBJECT
+class U2ALGORITHM_EXPORT MSADistanceMatrix {
     friend class MSADistanceAlgorithm;
 private:
     MSADistanceMatrix();
-    MSADistanceMatrix(QList<MultipleSequenceAlignmentRow> theListOfRows, int _aligmentLength, int rowsNumber);
+    MSADistanceMatrix(const MultipleSequenceAlignment& ma, bool _excludeGaps, bool _usePercents);
 
 public:
-    MSADistanceMatrix(const MSADistanceMatrix &copy);
-    MSADistanceMatrix& operator=(const MSADistanceMatrix &second);
     bool isEmpty(){ return table.isEmpty(); }
     int getSimilarity(int row1, int row2);
     int getSimilarity(int row1, int row2, bool _usePercents);
@@ -106,8 +103,6 @@ public:
     MSADistanceAlgorithm(MSADistanceAlgorithmFactory* factory, const MAlignment& ma);
 
     int getSimilarity(int row1, int row2, bool usePercents);
-
-    void getMatrix(MSADistanceMatrix& _distanceMatrix);
 
     const MSADistanceMatrix& getMatrix() const;
         
