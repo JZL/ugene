@@ -20,6 +20,7 @@
  */
 
 #include <U2Core/AppContext.h>
+#include <U2Core/Log.h>
 #include <U2Core/ScriptingToolRegistry.h>
 
 #include "JavaSupport.h"
@@ -58,15 +59,31 @@ void JavaSupport::getAdditionalParameters(const QString& output) {
     if (output.contains("64-Bit")) {
         architecture = x64;
     }
+    validationOutput << output;
 }
 
-U2::JavaSupport::Architecture JavaSupport::getArchitecture() const {
+JavaSupport::Architecture JavaSupport::getArchitecture() const {
     return architecture;
 }
 
 void JavaSupport::sl_toolValidationStatusChanged(bool isValid) {
     Q_UNUSED(isValid);
     ScriptingTool::onPathChanged(this, QStringList() << "-jar");
+
+    coreLog.details("Java path: " + path);
+    switch (architecture) {
+    case x32:
+        coreLog.details("Java architecture: 32-bit");
+        break;
+    case x64:
+        coreLog.details("Java architecture: 64-bit");
+        break;
+    }
+
+    foreach (const QString &output, validationOutput) {
+        coreLog.details("Java validation output:");
+        coreLog.details(output);
+    }
 }
 
 } // U2

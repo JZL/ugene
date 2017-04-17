@@ -44,6 +44,7 @@ private slots:
 
 private:
     Architecture architecture;
+    QStringList validationOutput;
 };
 
 } // U2

@@ -76,8 +76,14 @@ const QStringList SnpEffSupport::getToolRunnerAdditionalOptions() {
         memSize = memSize > 1212 ? 1212 : memSize;
     }
 #endif // windows or linux
-    result << "-Xmx" + QString::number(memSize > 150 ? memSize - 150 : memSize) + "M";
+    const int memForjava = memSize > 150 ? memSize - 150 : memSize;
+    algoLog.details("Java available memory: " + QString::number(memForjava) + "M");
+    result << "-Xmx" + QString::number(memForjava) + "M";
     return result;
+}
+
+void SnpEffSupport::getAdditionalParameters(const QString &output) {
+    validationOutput << output;
 }
 
 void SnpEffSupport::sl_validationStatusChanged(bool isValid) {
@@ -85,6 +91,12 @@ void SnpEffSupport::sl_validationStatusChanged(bool isValid) {
         SnpEffDatabaseListTask* task = new SnpEffDatabaseListTask();
         connect(task, SIGNAL(si_stateChanged()), SLOT(sl_databaseListIsReady()));
         AppContext::getTaskScheduler()->registerTopLevelTask(task);
+        coreLog.details("SnpEff version: " + version);
+    }
+
+    foreach (const QString &output, validationOutput) {
+        coreLog.details("SnpEff validation output:");
+        coreLog.details(output);
     }
 }
 

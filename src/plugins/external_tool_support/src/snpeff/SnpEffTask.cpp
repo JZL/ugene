@@ -50,6 +50,8 @@ SnpEffParser::SnpEffParser(const QString &genome)
 }
 
 void SnpEffParser::parseOutput( const QString& partOfLog ) {
+    fullOutput += partOfLog;
+    output += partOfLog;
     lastPartOfLog = partOfLog.split(QRegExp("(\n|\r)"));
 
     foreach(const QString &buf, lastPartOfLog) {
@@ -63,6 +65,8 @@ void SnpEffParser::parseOutput( const QString& partOfLog ) {
 }
 
 void SnpEffParser::parseErrOutput( const QString& partOfLog ) {
+    fullOutput += partOfLog;
+    errorOutput += partOfLog;
     lastPartOfLog = partOfLog.split(QRegExp("(\n|\r)"));
     lastPartOfLog.first() = lastErrLine+lastPartOfLog.first();
     lastErrLine = lastPartOfLog.takeLast();
@@ -74,6 +78,7 @@ void SnpEffParser::parseErrOutput( const QString& partOfLog ) {
 
         if (buf.contains("java.lang.OutOfMemoryError")) {
             setLastError(tr("There is not enough memory to complete the SnpEff execution.It is recommended to run SnpEff on a computer with RAM 4Gb or more."));
+            algoLog.details("SnpEff error: java.lang.OutOfMemoryError");
             continue;
         }
         if (buf.contains("Could not reserve enough space for object heap", Qt::CaseInsensitive) ||
@@ -103,6 +108,18 @@ void SnpEffParser::parseErrOutput( const QString& partOfLog ) {
             coreLog.details("SnpEff notificates about genome database error: " + buf);
         }
     }
+}
+
+const QString &SnpEffParser::getErrorOutput() const {
+    return errorOutput;
+}
+
+const QString &SnpEffParser::getOutput() const {
+    return output;
+}
+
+const QString &SnpEffParser::getFullOutput() const {
+    return fullOutput;
 }
 
 QStringList SnpEffParser::initStringsToIgnore() {
@@ -149,7 +166,8 @@ void SnpEffTask::prepare(){
     const QStringList args = getParameters(stateInfo);
     CHECK_OP(stateInfo, );
 
-    ExternalToolRunTask* etTask = new ExternalToolRunTask(ET_SNPEFF, args, new SnpEffParser(settings.genome), settings.outDir, QStringList(), QString(), true);
+    logParser = new SnpEffParser(settings.genome);
+    ExternalToolRunTask* etTask = new ExternalToolRunTask(ET_SNPEFF, args, logParser, settings.outDir, QStringList(), QString(), true);
     setListenerForTask(etTask);
     etTask->setStandartOutputFile( getResFileUrl() );
     addSubTask(etTask);
@@ -164,6 +182,17 @@ void SnpEffTask::run(){
         return ;
     }
     resultUrl = getResFileUrl();
+}
+
+Task::ReportResult SnpEffTask::report() {
+    CHECK(NULL != logParser, ReportResult_Finished);
+    algoLog.details("snpEff error output:");
+    algoLog.details(logParser->getErrorOutput());
+    algoLog.details("snpEff output:");
+    algoLog.details(logParser->getOutput());
+    algoLog.details("snpEff full output:");
+    algoLog.details(logParser->getFullOutput());
+    return ReportResult_Finished;
 }
 
 QString SnpEffTask::getSummaryUrl(){

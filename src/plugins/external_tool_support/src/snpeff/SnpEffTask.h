@@ -27,6 +27,7 @@
 
 namespace U2 {
 
+class SnpEffParser;
 
 class SnpEffSetting{
 public:
@@ -52,6 +53,7 @@ public:
 
     void prepare();
     void run();
+    ReportResult report();
 
     QString getResult(){return resultUrl;}
     QString getSummaryUrl();
@@ -64,6 +66,7 @@ protected:
 protected:
     SnpEffSetting settings;
     QString resultUrl;
+    QPointer<SnpEffParser> logParser;
 };
 
 
@@ -75,8 +78,16 @@ public:
     void parseOutput(const QString& partOfLog);
     void parseErrOutput(const QString& partOfLog);
 
+    const QString &getErrorOutput() const;
+    const QString &getOutput() const;
+    const QString &getFullOutput() const;
+
 private:
     static QStringList initStringsToIgnore();
+
+    QString errorOutput;
+    QString output;
+    QString fullOutput;
 
     QString lastErrLine;
     QString genome;
