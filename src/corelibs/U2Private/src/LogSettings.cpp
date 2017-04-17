@@ -19,13 +19,15 @@
  * MA 02110-1301, USA.
  */
 
-#include "LogSettings.h"
+#include <QColor>
+#include <QDir>
 
 #include <U2Core/AppContext.h>
-#include <U2Core/Settings.h>
 #include <U2Core/CMDLineRegistry.h>
+#include <U2Core/GUrlUtils.h>
+#include <U2Core/Settings.h>
 
-#include <QtGui/QColor>
+#include "LogSettings.h"
 
 #define SETTINGS_ROOT QString("log_settings/")
 
@@ -75,8 +77,18 @@ void LogSettings::reinitAll() {
     showCategory = s->getValue(SETTINGS_ROOT + "showCategory", false).toBool();
     logPattern = s->getValue(SETTINGS_ROOT + "datePattern", "hh:mm").toString();
     enableColor = s->getValue(SETTINGS_ROOT + "enableColor", true).toBool();
+    const bool forceSet = s->getValue(SETTINGS_ROOT + "logToFileAlreadyForceSet", false).toBool();
     toFile = s->getValue(SETTINGS_ROOT + "logToFile", false).toBool();
     outputFile = s->getValue(SETTINGS_ROOT + "outFilePath", QString("")).toString();
+    if ((!toFile || outputFile.isEmpty()) && !forceSet) {
+        toFile = true;
+        const QString logDir = GUrlUtils::getDefaultDataPath() + "/logs";
+        QDir().mkpath(logDir);
+        outputFile = logDir + "/ugene.log";
+        s->setValue(SETTINGS_ROOT + "logToFileAlreadyForceSet", true);
+        s->setValue(SETTINGS_ROOT + "logToFile", true);
+        s->setValue(SETTINGS_ROOT + "outFilePath", outputFile);
+    }
 
     reinitCategories();
 }

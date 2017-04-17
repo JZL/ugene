@@ -203,7 +203,7 @@ AppSettingsGUIPageState* LogSettingsPageWidget::getState(QString& err) const {
         QString logFile(saveController->getSaveFileName());
         QFileInfo lf(logFile);
         QFile file(logFile);
-        bool writeble = file.open(QIODevice::WriteOnly);
+        bool writeble = file.open(QIODevice::Append);
         file.close();
         if (!writeble || lf.fileName().isEmpty()){
             QMessageBox::warning(NULL, tr("Warning"), tr("Unable to open log file for writing, log writing to file disabled"), QMessageBox::Ok);
