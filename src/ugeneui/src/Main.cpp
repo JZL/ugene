@@ -728,6 +728,7 @@ int main(int argc, char **argv)
     coreLog.info( QObject::tr( "UGENE started" ));
     coreLog.info( QObject::tr( "UGENE version: %1 %2-bit").arg( v.text ).arg( Version::appArchitecture ) );
     coreLog.info( QObject::tr( "UGENE distribution: %1").arg( v.distributionInfo ));
+    coreLog.info(QObject::tr("UGENE available memory: %1").arg(AppResourcePool::instance()->getMaxMemorySizeInMB()));
 
     QObject::connect(ts, SIGNAL(si_noTasksInScheduler()), splashScreen, SLOT(sl_close()));
     QObject::connect(ts, SIGNAL(si_noTasksInScheduler()), mw, SLOT(sl_show()));

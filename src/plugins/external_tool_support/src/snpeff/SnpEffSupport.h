@@ -36,12 +36,16 @@ public:
     SnpEffSupport(const QString& name, const QString& path = "");
 
     const QStringList getToolRunnerAdditionalOptions();
+    void getAdditionalParameters(const QString& output);
 
     static SnpEffDatabaseListModel* databaseModel;
 
 private slots:
     void sl_validationStatusChanged(bool isValid);
     void sl_databaseListIsReady();
+
+private:
+    QStringList validationOutput;
 };
 
 }//namespace
