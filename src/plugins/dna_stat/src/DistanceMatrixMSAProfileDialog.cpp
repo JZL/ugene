@@ -156,6 +156,7 @@ void DistanceMatrixMSAProfileTask::prepare() {
 
 QList<Task*> DistanceMatrixMSAProfileTask::onSubTaskFinished(Task* subTask) {
     MSADistanceAlgorithm* algo = qobject_cast<MSADistanceAlgorithm*>(subTask);
+    
     QList<Task*> res;
     if (algo != NULL) {
         if (algo->hasError() || algo->isCanceled()) {
@@ -269,12 +270,13 @@ QList<Task*> DistanceMatrixMSAProfileTask::onSubTaskFinished(Task* subTask) {
             }
             resultText += "\n";
 
+            int minLen = s.ma.getLength();
             for (int i = 0; i < s.ma.getNumRows(); i++) {
                 QString name = s.ma.getRow(i).getName();
                 TextUtils::wrapForCSV(name);
                 resultText += name;
                 for (int j = 0; j < s.ma.getNumRows(); j++) {
-                    int val = qRound(algo->getSimilarity(i, j) * (s.usePercents ? (100.0 / s.ma.getLength()) : 1.0));
+                    int val = algo->getSimilarity(i, j, s.usePercents);
                     resultText += "," + QString::number(val) + (s.usePercents ? "%" : "");
                     FileAndDirectoryUtils::dumpStringToFile(f, resultText);
                 }
@@ -317,12 +319,16 @@ void DistanceMatrixMSAProfileTask::createDistanceTable(MSADistanceAlgorithm* alg
         resultText += "<tr>";
         resultText += "<td> " + name + "</td>";
         for (int j=0; j < rows.size(); j++) {
+<<<<<<< HEAD
             if(s.usePercents && s.excludeGaps){
                 int len1 = rows.at(i).getUngappedLength();
                 int len2 = rows.at(j).getUngappedLength();
                 minLen = qMin(len1, len2);
             }
             int val = qRound(algo->getSimilarity(i, j) * (s.usePercents ? (100.0 / minLen) : 1.0));
+=======
+            int val = algo->getSimilarity(i, j, s.usePercents);
+>>>>>>> d4b152f... UGENE-5562 Hamming dissimilarity distance matrix differs in html and csv files
 
             QString colorStr = "";
             if (i != j) {
