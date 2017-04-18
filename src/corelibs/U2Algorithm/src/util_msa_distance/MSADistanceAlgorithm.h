@@ -30,7 +30,6 @@
 
 namespace U2 {
 
-class MAlignment;
 class MSADistanceAlgorithm;
 class DNAAlphabet;
 class MSADistanceMatrix;
@@ -79,7 +78,7 @@ class U2ALGORITHM_EXPORT MSADistanceMatrix {
     friend class MSADistanceAlgorithm;
 private:
     MSADistanceMatrix();
-    MSADistanceMatrix(const MultipleSequenceAlignment& ma, bool _excludeGaps, bool _usePercents);
+    MSADistanceMatrix(const MAlignment& ma, bool _excludeGaps, bool _usePercents);
 
 public:
     bool isEmpty(){ return table.isEmpty(); }
@@ -130,7 +129,7 @@ private:
 protected:
     virtual void fillTable();
     virtual int calculateSimilarity(int , int ){return 0;}
-    MultipleSequenceAlignment                   ma;
+    MAlignment                                  ma;
     mutable QMutex                              lock;
     bool                                        excludeGaps;
     bool                                        isSimilarity;

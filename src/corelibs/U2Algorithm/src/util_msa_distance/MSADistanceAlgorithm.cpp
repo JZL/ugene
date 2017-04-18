@@ -114,14 +114,14 @@ MSADistanceMatrix::MSADistanceMatrix()
 : usePercents(true), excludeGaps(false), alignmentLength(0) {
 }
 
-MSADistanceMatrix::MSADistanceMatrix(const MultipleSequenceAlignment& ma, bool _excludeGaps, bool _usePercents)
-: usePercents(_usePercents), excludeGaps(_excludeGaps), alignmentLength(ma->getLength()) {
-    int nSeq = ma->getNumRows();
+MSADistanceMatrix::MSADistanceMatrix(const MAlignment &ma, bool _excludeGaps, bool _usePercents)
+: usePercents(_usePercents), excludeGaps(_excludeGaps), alignmentLength(ma.getLength()) {
+    int nSeq = ma.getNumRows();
     table.reserve(nSeq);
     for (int i = 0; i < nSeq; i++) {
         table.append(QVarLengthArray<int>(i + 1));
         memset(table[i].data(), 0, (i + 1) * sizeof(int));
-        seqsUngappedLenghts.append(ma->getMsaRow(i)->getUngappedLength());
+        seqsUngappedLenghts.append(ma.getRow(i).getUngappedLength());
     }
 }
 
