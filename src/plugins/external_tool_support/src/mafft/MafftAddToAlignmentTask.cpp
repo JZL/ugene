@@ -210,10 +210,12 @@ void MafftAddToAlignmentTask::run() {
 
     dbi->updateMsaAlphabet(settings.msaRef.entityId, settings.alphabet, stateInfo);
     CHECK_OP(stateInfo, );
+
     QMap<QString, qint64> uniqueNamesToIds;
-    foreach (const MultipleSequenceAlignmentRow& refRow, inputMsa->getMsaRows()) {
-        uniqueNamesToIds[refRow->getName()] = refRow->getRowId();
+    foreach (const MAlignmentRow& refRow, inputMsa.getRows()) {
+        uniqueNamesToIds[refRow.getName()] = refRow.getRowId();
     }
+
     foreach(GObject* object, tmpDoc->getObjects()) {
         if (hasError() || isCanceled()) {
             return;
