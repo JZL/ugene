@@ -49,11 +49,14 @@ public:
                               int minIdentityPercent,
                               DbiDataStorage *storage);
     void prepare();
+    QString generateReport() const;
     QList<Task*> onSubTaskFinished(Task *subTask);
     QString getResultUrl() const;
     SharedDbiDataHandler getAnnotations() const;
 
 private:
+    void writeAlignResult();
+
     const QString referenceUrl;
     const QString resultUrl;
     const SharedDbiDataHandler reference;

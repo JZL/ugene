@@ -60,6 +60,8 @@ public:
 
     AlignToReferenceBlastCmdlineTask(const Settings& settings);
     void prepare();
+    void run() {};
+    QString generateReport() const;
     QList<Task*> onSubTaskFinished(Task *subTask);
     virtual ReportResult report();
 

@@ -288,6 +288,62 @@ QList<Task*> AlignToReferenceBlastTask::onSubTaskFinished(Task *subTask) {
     return result;
 }
 
+void AlignToReferenceBlastTask::writeAlignResult() {
+    file.open();
+    int count = 0;
+    QByteArray filtredReads;
+    foreach(BlastAndSwReadTask* subTask, blastTask->getBlastSubtasks()) {
+        if (subTask->getReadIdentity() > minIdentityPercent) {
+            file.write(subTask->getReadName().toUtf8());
+            file.write("\n");
+            file.write(QByteArray::number(subTask->isComplement()));
+            file.write("\n");
+            count++;
+        }
+        else {
+            filtredReads += subTask->getReadName().toUtf8();
+            filtredReads += "\n";
+        }
+    }
+    file.write(filtredReads);
+    QScopedPointer<U2SequenceObject> refObject(StorageUtils::getSequenceObject(storage, reference));
+    file.write(refObject->getSequenceName().toLocal8Bit());
+    file.write("\n");
+    file.write(QByteArray::number(count));
+    file.write("\n");
+    file.close();
+}
+
+QString AlignToReferenceBlastTask::generateReport() const {
+    QString result;
+    QTemporaryFile f;
+    f.setFileName(file.fileName());
+    f.open();
+    QVector<QString> data;
+    while (!f.atEnd()) {
+        data.append(f.readLine());
+    }
+
+    result += "<br><table><tr><td><b>Details</b></td></tr></table>\n";
+    result += "<table><tr><td>" + tr("&nbsp;&nbsp;<u>Reference sequence:</u> %1").arg(data[data.size() - 2]) + "</td></tr></table>";
+    result += "<table><tr><td>" + tr("&nbsp;&nbsp;<u>Aligned reads (%1):").arg(data.back().toInt()) + "</u></td></tr></table>";
+    result += "<table>";
+    for (int i = 0; i < data.back().toInt() * 2; i += 2) {
+        bool complement = data[i + 1].toInt();
+        QString read = (complement ? "&#x2190;&nbsp;&nbsp;" : "&#x2192;&nbsp;&nbsp;") + data[i];
+        result += "<tr><td width=50>" + tr("") + "</td><td>" + read + "</td></tr>";
+    }
+    result += "</table>";
+    result += "<table><tr><td>" + tr("&nbsp;&nbsp;<u>Filtered by quality (%1):").arg(reads.size() - data.back().toInt()) + "</u></td></tr></table>";
+    result += "<table>";
+    for (int i = data.back().toInt() * 2; i < data.size() - 2; i++) {
+        result += "<tr><td width=50>" + tr("") + "</td><td width=300>" + data[i] + "</td></tr>";
+    }
+    result += "</table>";
+    return result;
+}
+
+
 QString AlignToReferenceBlastTask::getResultUrl() const {
     CHECK(NULL != saveTask, "");
     return saveTask->getURL().getURLString();
