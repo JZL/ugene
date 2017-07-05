@@ -1655,22 +1655,19 @@ GUI_TEST_CLASS_DEFINITION(tree_settings_test_0005){
     GTCheckBox::setChecked(os, alignLabelsCheck, false);
     QWidget* w = GTWidget::findWidget(os, "treeView");
     CHECK_SET_ERR(w != NULL, "tree view not found");
-    QPixmap initPixmap = QPixmap::grabWidget(w, w->rect());
-    QImage initImg = initPixmap.toImage();//initial state
+    QImage initImg = GTWidget::getImage(os, w);//initial state
 
     GTCheckBox::setChecked(os, alignLabelsCheck, true);
 
 //    Expected state: labels are aligned
-    QPixmap alignedPixmap = QPixmap::grabWidget(w, w->rect());
-    QImage alignedImg = alignedPixmap.toImage();//initial state
+    QImage alignedImg = GTWidget::getImage(os, w);
     CHECK_SET_ERR(alignedImg != initImg, "labels not aligned");
 
 //    8. Uncheck "align labels" checkbox.
     GTCheckBox::setChecked(os, alignLabelsCheck, false);
 
 //    Expected state: labels are not aligned
-    QPixmap finalPixmap = QPixmap::grabWidget(w, w->rect());
-    QImage finalImg = finalPixmap.toImage();//initial state
+    QImage finalImg = GTWidget::getImage(os, w);
     CHECK_SET_ERR(finalImg == initImg, "tree ialigned");
 }
 

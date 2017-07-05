@@ -226,6 +226,9 @@ void guiTestMessageOutput(QtMsgType type, const QMessageLogContext &context, con
         uiLog.trace(msg);
         break;
     case QtWarningMsg:
+        if (msg.contains("object")) {
+            int aaa = 0;
+        }
         uiLog.details(msg);
         break;
     case QtCriticalMsg:
