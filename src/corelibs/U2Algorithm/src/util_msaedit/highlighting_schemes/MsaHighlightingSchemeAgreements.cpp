@@ -32,12 +32,14 @@ MsaHighlightingSchemeAgreements::MsaHighlightingSchemeAgreements(QObject *parent
 }
 
 void MsaHighlightingSchemeAgreements::process(const char refChar, char &seqChar, QColor &color, bool &highlight, int refCharColumn, int refCharRow) const {
-    highlight = (refChar == seqChar);
-    if (!highlight) {
-        //color = QColor();
-        color = QColor(255, 255, 255, 150);
-
-    }
+    highlight = (1==1);
+    if(seqChar == '-'){
+	    color = QColor(0,0,0, 100);
+    }else if(refChar == seqChar){
+	    color = QColor(0, 0, 255, 100);
+    }else{
+	    color = QColor(255, 0, 0,100);
+}
     MsaHighlightingScheme::process(refChar, seqChar, color, highlight, refCharColumn, refCharRow);
 }
 
