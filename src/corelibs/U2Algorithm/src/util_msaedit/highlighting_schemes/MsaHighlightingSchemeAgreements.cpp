@@ -34,7 +34,9 @@ MsaHighlightingSchemeAgreements::MsaHighlightingSchemeAgreements(QObject *parent
 void MsaHighlightingSchemeAgreements::process(const char refChar, char &seqChar, QColor &color, bool &highlight, int refCharColumn, int refCharRow) const {
     highlight = (refChar == seqChar);
     if (!highlight) {
-        color = QColor();
+        //color = QColor();
+        color = QColor(255, 255, 255, 150);
+
     }
     MsaHighlightingScheme::process(refChar, seqChar, color, highlight, refCharColumn, refCharRow);
 }
