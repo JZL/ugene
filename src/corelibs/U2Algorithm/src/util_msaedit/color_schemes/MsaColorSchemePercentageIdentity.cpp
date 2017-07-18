@@ -49,18 +49,25 @@ MsaColorSchemePercentageIdentity::MsaColorSchemePercentageIdentity(QObject *pare
 }
 
 QColor MsaColorSchemePercentageIdentity::getColor(int /*seq*/, int pos, char c) const {
-    updateCache();
     if (c == U2Msa::GAP_CHAR) {
-        return QColor();
+        //I think grey is clearer because it shows it's not nothing
+        return QColor(250, 250, 250);
     }
-    quint32 packedVal = indentCache[pos];
-    MSAConsensusUtils::unpackConsensusCharsFromInt(packedVal, tmpChars, tmpRanges);
-    for (int i=0; i < 4; i++) {
-        if (c == tmpChars[i]) {
-            int range = tmpRanges[i];
-            return colorsByRange[range];
-        }
+
+    const MultipleAlignment ma = maObj->getMultipleAlignment();
+    int nSeq = ma->getNumRows();
+    for(int seq = 0; seq<nSeq;seq++){
+            char seqC = ma->charAt(seq, pos);
+            if(seqC == c){
+                    /*
+                            //If no Hsl, can use a bitmasked rgb value
+                            tmpColor = colorFull/(seq+1);
+                            return QColor(tmpColor>>(4*4), tmpColor>>(4*2)&0xff, tmpColor&0xff);
+                    */
+                    return QColor().fromHsl((int)((358)*((float)(seq+1)/nSeq)), 255, 128);
+            }
     }
+    //Should never return because, at least, the sequence should match itself
     return QColor();
 }
 
