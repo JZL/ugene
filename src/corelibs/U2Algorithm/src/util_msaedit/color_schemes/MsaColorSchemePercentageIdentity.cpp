@@ -64,7 +64,8 @@ QColor MsaColorSchemePercentageIdentity::getColor(int /*seq*/, int pos, char c) 
                             tmpColor = colorFull/(seq+1);
                             return QColor(tmpColor>>(4*4), tmpColor>>(4*2)&0xff, tmpColor&0xff);
                     */
-                    return QColor().fromHsl((int)((358)*((float)(seq+1)/nSeq)), 255, 128);
+                    //-30 bc I don't want the wrap around of red on both sides
+                    return QColor().fromHsl((((358-30)*(seq+1))/(nSeq)), 255, 128);
             }
     }
     //Should never return because, at least, the sequence should match itself
